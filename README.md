@@ -16,4 +16,6 @@ https://github.com/dart-lang/sdk/tree/main/pkg/analyzer/doc/tutorial
 - [x] find files
 - [x] analyze files - get riverpods ( just files that has name by 'Provider')
 - [x] process - make graph of riverpods
-- [ ] make mermaid graph on '.md' file format ( for obsidian )
+- [x] make mermaid graph on '.md' file format ( for obsidian )
+- [ ] easy solution for other path
+- [ ] show page that used

@@ -14,7 +14,40 @@ void main() {
 
   final graph = makeGraph(vars);
 
-  print(graph);
+  makeMermaidFile(landLearnPath, graph);
+}
+
+void makeMermaidFile(String path, Map<String, List<String>> graph) {
+  // access to file
+  final file = File(path + '\\riverpod_diagram.md');
+  // create
+  if (!file.existsSync()) {
+    file.createSync();
+  }
+
+  // make mermaid
+
+  final sBuilder = StringBuffer();
+
+  for (final i in graph.entries) {
+    for (final usedVariable in i.value) {
+      sBuilder.writeln('$usedVariable --> ${i.key} ;');
+    }
+
+    sBuilder.writeln();
+  }
+
+  final output = """
+  
+```mermaid
+graph TD;
+
+$sBuilder
+```
+
+  """;
+
+  file.writeAsStringSync(output);
 }
 
 List<String> getFiles(String path) {
