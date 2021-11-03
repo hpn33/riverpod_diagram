@@ -33,12 +33,13 @@ class IfCounter extends SimpleAstVisitor<void> {
     // print('------ ${node.variables.type}');
 
     for (var element in node.variables.variables) {
-      if (element.name.toString().contains('Provider')) {
+      // if (element.name.toString().contains('Provider')) {
+      if (element.initializer.toString().contains('Provider')) {
         providersList.add(element);
       }
 
       //   print(element.name);
-      //   print(element.initializer);
+      // print(element.initializer);
       //   // print(element.childEntities);
       //   // print(element);
       //   // print(element.runtimeType);
