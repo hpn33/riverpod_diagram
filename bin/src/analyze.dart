@@ -5,20 +5,21 @@ import 'package:analyzer/dart/analysis/analysis_context_collection.dart';
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 
-import '../flutter_riverpod_graph.dart';
+import '../main.dart';
 import 'parse.dart';
 
 const landLearnPath = "C:\\ws\\flutter\\landlearn\\lib";
 
 Future<void> main() async {
-  final vars = analyze(getFiles(landLearnPath));
+  // final vars =
+  analyze(getFiles(landLearnPath));
 
-  for (var element in vars) {
-    print(element.name);
-  }
+  // for (var element in vars) {
+  //   print(element.name);
+  // }
 }
 
-List<VariableDeclaration> analyze(List<String> filesPath) {
+void analyze(List<String> filesPath) {
 // final path = Directory.current.path + '\\bin\\';
   // final paths = await dirContents(Directory(landLearnPath));
 
@@ -28,38 +29,28 @@ List<VariableDeclaration> analyze(List<String> filesPath) {
 
   // print('----');
 
-  return analyzeAllFiles(collection);
+  analyzeAllFiles(collection);
 }
 
-List<VariableDeclaration> analyzeSomeFiles(
+void analyzeSomeFiles(
     AnalysisContextCollection collection, List<String> includedPaths) {
-  final l = <VariableDeclaration>[];
-
   for (String path in includedPaths) {
     AnalysisContext context = collection.contextFor(path);
-    l.addAll(analyzeSingleFile(context, path));
+    analyzeSingleFile(context, path);
   }
-
-  return l;
 }
 
-List<VariableDeclaration> analyzeAllFiles(
-    AnalysisContextCollection collection) {
-  final l = <VariableDeclaration>[];
-
+void analyzeAllFiles(AnalysisContextCollection collection) {
   for (AnalysisContext context in collection.contexts) {
     for (String path in context.contextRoot.analyzedFiles()) {
-      l.addAll(analyzeSingleFile(context, path));
+      analyzeSingleFile(context, path);
     }
   }
-
-  return l.toList();
 }
 
-List<VariableDeclaration> analyzeSingleFile(
-    AnalysisContext context, String path) {
+void analyzeSingleFile(AnalysisContext context, String path) {
   AnalysisSession session = context.currentSession;
   // ...
 
-  return processFile(session, path);
+  processFile(session, path);
 }

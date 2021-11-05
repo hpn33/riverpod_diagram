@@ -5,6 +5,7 @@ import 'package:path/path.dart';
 
 import 'src/analyze.dart';
 import 'src/directory.dart';
+import 'src/parse.dart';
 
 // const landLearnPath = "C:\\ws\\flutter\\landlearn\\lib";
 
@@ -25,9 +26,10 @@ void main(List<String> arguments) {
 
   final filesPath = getFiles(path);
 
-  final vars = analyze(filesPath);
+  // final vars =
+  analyze(filesPath);
 
-  final graph = makeGraph(vars);
+  final graph = makeGraph();
 
   makeMermaidFile(path, graph);
 }
@@ -72,13 +74,27 @@ List<String> getFiles(String path) {
       .toList();
 }
 
-List<GraphNode> makeGraph(List<VariableDeclaration> vars) {
+List<GraphNode> makeGraph() {
+  /// make class type
+  final clas = collecData.classList;
   final listTemp = <GraphNode>[];
+  var index = 0;
+
+  for (final i in List.generate(clas.length, (index) => index)) {
+    index++;
+    final cls = clas[i];
+
+    listTemp.add(GraphNode(index, classDeclaration: cls));
+  }
+
+  /// make var type
+  final vars = collecData.varList;
 
   for (final i in List.generate(vars.length, (index) => index)) {
+    index++;
     final v = vars[i];
 
-    listTemp.add(GraphNode(i, v));
+    listTemp.add(GraphNode(index, variable: v));
   }
 
   for (var element in listTemp) {
@@ -90,20 +106,31 @@ List<GraphNode> makeGraph(List<VariableDeclaration> vars) {
 
 class GraphNode {
   final int id;
-  final VariableDeclaration variable;
-  final String type;
+  final VariableDeclaration? variable;
+  final ClassDeclaration? classDeclaration;
+  // final String type;
 
-  String get name => variable.name.toString();
+  String get name => variable != null
+      ? variable!.name.toString()
+      : classDeclaration!.name.toString();
 
   final List<GraphNode> usedNode = [];
 
-  GraphNode(this.id, this.variable, {this.type = 'var'});
+  GraphNode(this.id, {this.variable, this.classDeclaration});
 
   void makeEdges(List<GraphNode> nodes) {
-    final initializer = variable.initializer;
+    final body = (variable != null ? variable!.initializer : classDeclaration)
+        .toString();
 
+    print('is class: ${classDeclaration != null}');
     for (final node in nodes) {
-      if (initializer.toString().contains(node.name.toString())) {
+      print('node class: ${node.classDeclaration != null}');
+      if (node.variable == null) {
+        // if is was class
+        continue;
+      }
+
+      if (body.contains(node.name.toString())) {
         usedNode.add(node);
       }
     }
@@ -112,9 +139,9 @@ class GraphNode {
   String label() {
     String title = '';
 
-    if (type == 'var') {
+    if (variable != null) {
       title = '($name)';
-    } else if (type == 'class') {
+    } else if (classDeclaration != null) {
       title = '(($name))';
     }
 

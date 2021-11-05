@@ -3,14 +3,20 @@ import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
 
-List<VariableDeclaration> processFile(AnalysisSession session, String path) {
-  final providersList = <VariableDeclaration>[];
+class CollecData {
+  final varList = <VariableDeclaration>[];
+
+  final classList = <ClassDeclaration>[];
+}
+
+CollecData processFile(AnalysisSession session, String path) {
+  // final providersList = <VariableDeclaration>[];
 
   var result = session.getParsedUnit(path);
 
   if (result is ParsedUnitResult) {
     CompilationUnit unit = result.unit;
-    unit.visitChildren(IfCounter(providersList));
+    unit.visitChildren(IfCounter());
 
     // providersList.forEach((element) {
     //   print(element.name);
@@ -20,13 +26,25 @@ List<VariableDeclaration> processFile(AnalysisSession session, String path) {
 
   }
 
-  return providersList;
+  return collecData;
 }
 
-class IfCounter extends SimpleAstVisitor<void> {
-  final List providersList;
+const classCheckList = ['StatelessWidget', 'HookWidget', 'StatefulWidget'];
+final collecData = CollecData();
 
-  IfCounter(this.providersList);
+class IfCounter extends SimpleAstVisitor<void> {
+  // final CollecData collecData;
+
+  // IfCounter(this.collecData);
+
+  @override
+  void visitClassDeclaration(ClassDeclaration node) {
+    for (final item in classCheckList) {
+      if (node.extendsClause.toString().contains(item)) {
+        collecData.classList.add(node);
+      }
+    }
+  }
 
   @override
   void visitTopLevelVariableDeclaration(TopLevelVariableDeclaration node) {
@@ -35,7 +53,7 @@ class IfCounter extends SimpleAstVisitor<void> {
     for (var element in node.variables.variables) {
       // if (element.name.toString().contains('Provider')) {
       if (element.initializer.toString().contains('Provider')) {
-        providersList.add(element);
+        collecData.varList.add(element);
       }
 
       //   print(element.name);
