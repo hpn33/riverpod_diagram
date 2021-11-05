@@ -1,20 +1,35 @@
 import 'dart:io';
 
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:path/path.dart';
 
 import 'src/analyze.dart';
 import 'src/directory.dart';
 
-const landLearnPath = "C:\\ws\\flutter\\landlearn\\lib";
+// const landLearnPath = "C:\\ws\\flutter\\landlearn\\lib";
 
-void main() {
-  final filesPath = getFiles(landLearnPath);
+const pathArg = 'path';
+
+void main(List<String> arguments) {
+  ///
+  // final parser = ArgParser()..addOption(pathArg, abbr: 'p', defaultsTo: '.');
+  // ArgResults argResults = parser.parse(arguments);
+
+  // print(path.current);
+  // print(argResults[pathArg]);
+  // print(argResults.options);
+  // print(paths);
+
+  // final path = getPath(argResults[pathArg]);
+  final path = current;
+
+  final filesPath = getFiles(path);
 
   final vars = analyze(filesPath);
 
   final graph = makeGraph(vars);
 
-  makeMermaidFile(landLearnPath, graph);
+  makeMermaidFile(path, graph);
 }
 
 void makeMermaidFile(String path, Map<String, List<String>> graph) {

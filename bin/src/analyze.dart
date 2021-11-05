@@ -8,6 +8,8 @@ import 'package:analyzer/dart/ast/ast.dart';
 import '../flutter_riverpod_graph.dart';
 import 'parse.dart';
 
+const landLearnPath = "C:\\ws\\flutter\\landlearn\\lib";
+
 Future<void> main() async {
   final vars = analyze(getFiles(landLearnPath));
 
