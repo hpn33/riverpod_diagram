@@ -32,7 +32,7 @@ void main(List<String> arguments) {
   makeMermaidFile(path, graph);
 }
 
-void makeMermaidFile(String path, Map<String, List<String>> graph) {
+void makeMermaidFile(String path, List<GraphNode> nodes) {
   // access to file
   final file = File(path + '\\riverpod_diagram.md');
   // create
@@ -44,9 +44,9 @@ void makeMermaidFile(String path, Map<String, List<String>> graph) {
 
   final sBuilder = StringBuffer();
 
-  for (final i in graph.entries) {
-    for (final usedVariable in i.value) {
-      sBuilder.writeln('$usedVariable --> ${i.key} ;');
+  for (final node in nodes) {
+    for (final usedNode in node.usedNode) {
+      sBuilder.writeln('${usedNode.label()} --> ${node.label()} ;');
     }
 
     sBuilder.writeln();
@@ -72,14 +72,61 @@ List<String> getFiles(String path) {
       .toList();
 }
 
-Map<String, List<String>> makeGraph(List<VariableDeclaration> vars) {
-  final listTemp = <String, List<String>>{};
+List<GraphNode> makeGraph(List<VariableDeclaration> vars) {
+  final listTemp = <GraphNode>[];
 
-  for (final v in vars) {
-    listTemp[v.name.toString()] = findUsedProviders(v, vars);
+  for (final i in List.generate(vars.length, (index) => index)) {
+    final v = vars[i];
+
+    listTemp.add(GraphNode(i, v));
+  }
+
+  for (var element in listTemp) {
+    element.makeEdges(listTemp);
   }
 
   return listTemp;
+}
+
+class GraphNode {
+  final int id;
+  final VariableDeclaration variable;
+  final String type;
+
+  String get name => variable.name.toString();
+
+  final List<GraphNode> usedNode = [];
+
+  GraphNode(this.id, this.variable, {this.type = 'var'});
+
+  void makeEdges(List<GraphNode> nodes) {
+    final initializer = variable.initializer;
+
+    for (final node in nodes) {
+      if (initializer.toString().contains(node.name.toString())) {
+        usedNode.add(node);
+      }
+    }
+  }
+
+  String label() {
+    String title = '';
+
+    if (type == 'var') {
+      title = '($name)';
+    } else if (type == 'class') {
+      title = '(($name))';
+    }
+
+    return '$id$title';
+  }
+}
+
+class GraphEdge {
+  final int from;
+  final int to;
+
+  GraphEdge(this.from, this.to);
 }
 
 List<String> findUsedProviders(
