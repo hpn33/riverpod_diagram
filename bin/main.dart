@@ -122,9 +122,7 @@ class GraphNode {
     final body = (variable != null ? variable!.initializer : classDeclaration)
         .toString();
 
-    print('is class: ${classDeclaration != null}');
     for (final node in nodes) {
-      print('node class: ${node.classDeclaration != null}');
       if (node.variable == null) {
         // if is was class
         continue;
@@ -140,11 +138,19 @@ class GraphNode {
     String title = '';
 
     if (variable != null) {
-      title = '($name)';
+      final init = variable!.initializer.toString();
+
+      if (init.contains(RegExp(r'(Stream|Future)Provider(\.|<|\(\()'))) {
+        title = '>$name]';
+      } else if (init.contains(
+          RegExp(r'(State|StateNotifier|ChangeNotifier)Provider(\.|<|\(\()'))) {
+        title = '[[$name]]';
+      } else {
+        title = '($name)';
+      }
     } else if (classDeclaration != null) {
       title = '(($name))';
     }
-
     return '$id$title';
   }
 }
