@@ -18,4 +18,5 @@ https://github.com/dart-lang/sdk/tree/main/pkg/analyzer/doc/tutorial
 - [x] process - make graph of riverpods
 - [x] make mermaid graph on '.md' file format ( for obsidian )
 - [x] easy solution for other path ( run on place )
-- [ ] show page that used
+- [x] show page that used
+- [ ] show use count on each relation
