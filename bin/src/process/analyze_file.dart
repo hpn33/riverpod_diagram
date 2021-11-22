@@ -3,23 +3,23 @@ import 'dart:async';
 import 'package:analyzer/dart/analysis/analysis_context.dart';
 import 'package:analyzer/dart/analysis/analysis_context_collection.dart';
 import 'package:analyzer/dart/analysis/session.dart';
-import 'package:analyzer/dart/ast/ast.dart';
 
-import '../main.dart';
+import '../in/directory.dart';
+import '../model/collec_data.dart';
 import 'parse.dart';
 
 const landLearnPath = "C:\\ws\\flutter\\landlearn\\lib";
 
 Future<void> main() async {
   // final vars =
-  analyze(getFiles(landLearnPath));
+  analyze(getFiles(landLearnPath), CollecData());
 
   // for (var element in vars) {
   //   print(element.name);
   // }
 }
 
-void analyze(List<String> filesPath) {
+void analyze(List<String> filesPath, CollecData collecData) {
 // final path = Directory.current.path + '\\bin\\';
   // final paths = await dirContents(Directory(landLearnPath));
 
@@ -29,28 +29,36 @@ void analyze(List<String> filesPath) {
 
   // print('----');
 
-  analyzeAllFiles(collection);
+  analyzeAllFiles(collection, collecData);
 }
 
-void analyzeSomeFiles(
-    AnalysisContextCollection collection, List<String> includedPaths) {
-  for (String path in includedPaths) {
-    AnalysisContext context = collection.contextFor(path);
-    analyzeSingleFile(context, path);
-  }
-}
+// void analyzeSomeFiles(
+//   AnalysisContextCollection collection,
+//   List<String> includedPaths,
+//   CollecData collecData,
+// ) {
+//   for (String path in includedPaths) {
+//     AnalysisContext context = collection.contextFor(path);
+//     analyzeSingleFile(context, path, collecData);
+//   }
+// }
 
-void analyzeAllFiles(AnalysisContextCollection collection) {
+void analyzeAllFiles(
+    AnalysisContextCollection collection, CollecData collecData) {
   for (AnalysisContext context in collection.contexts) {
     for (String path in context.contextRoot.analyzedFiles()) {
-      analyzeSingleFile(context, path);
+      analyzeSingleFile(context, path, collecData);
     }
   }
 }
 
-void analyzeSingleFile(AnalysisContext context, String path) {
+void analyzeSingleFile(
+  AnalysisContext context,
+  String path,
+  CollecData collecData,
+) {
   AnalysisSession session = context.currentSession;
   // ...
 
-  processFile(session, path);
+  processFile(session, path, collecData);
 }

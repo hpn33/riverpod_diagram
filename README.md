@@ -20,3 +20,5 @@ https://github.com/dart-lang/sdk/tree/main/pkg/analyzer/doc/tutorial
 - [x] easy solution for other path ( run on place )
 - [x] show page that used
 - [ ] show use count on each relation
+- [x] in - process - out
+- [ ] make code structure

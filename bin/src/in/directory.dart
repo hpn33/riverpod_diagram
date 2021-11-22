@@ -36,3 +36,8 @@ String getPath(String? argResult) {
 
   return path.current;
 }
+
+List<String> getFiles(String path) => allDirContents(Directory(path))
+    .where((e) => e.path.endsWith('.dart'))
+    .map((e) => e.path)
+    .toList();

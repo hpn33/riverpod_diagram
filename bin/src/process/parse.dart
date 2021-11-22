@@ -3,39 +3,27 @@ import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
 
-class CollecData {
-  final varList = <VariableDeclaration>[];
+import '../model/collec_data.dart';
 
-  final classList = <ClassDeclaration>[];
-}
-
-CollecData processFile(AnalysisSession session, String path) {
-  // final providersList = <VariableDeclaration>[];
-
-  var result = session.getParsedUnit(path);
+void processFile(
+  AnalysisSession session,
+  String path,
+  CollecData collecData,
+) {
+  final result = session.getParsedUnit(path);
 
   if (result is ParsedUnitResult) {
     CompilationUnit unit = result.unit;
-    unit.visitChildren(IfCounter());
-
-    // providersList.forEach((element) {
-    //   print(element.name);
-    // });
-
-    // printMembers(unit);
-
+    unit.visitChildren(IfCounter(collecData));
   }
-
-  return collecData;
 }
 
 const classCheckList = ['StatelessWidget', 'HookWidget', 'StatefulWidget'];
-final collecData = CollecData();
 
 class IfCounter extends SimpleAstVisitor<void> {
-  // final CollecData collecData;
+  final CollecData collecData;
 
-  // IfCounter(this.collecData);
+  IfCounter(this.collecData);
 
   @override
   void visitClassDeclaration(ClassDeclaration node) {
